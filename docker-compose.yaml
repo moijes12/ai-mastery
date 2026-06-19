@@ -1,0 +1,9 @@
+services:
+  devcontainer:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    container_name: ai-mastery
+    volumes:
+      - .:/app:cached
+    command: sleep infinity

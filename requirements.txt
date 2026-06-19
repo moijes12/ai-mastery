@@ -1,0 +1,15 @@
+langchain
+langchain-aws
+boto3
+anthropic
+openai
+chromadb
+faiss-cpu
+python-dotenv
+jupyter
+pandas
+streamlit
+
+# Development tools
+pre-commit
+ruff
