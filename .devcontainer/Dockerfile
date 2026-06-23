@@ -1,5 +1,5 @@
-# syntax=docker/dockerfile:experimental
-FROM python:3.14-trixie
+# syntax=docker/dockerfile:1.4
+FROM python:3.14-bookworm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \

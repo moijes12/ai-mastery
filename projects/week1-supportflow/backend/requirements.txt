@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+sqlmodel
+psycopg[binary,pool]
+pydantic
+scikit-learn
+xgboost
+pandas
+polars
+sentence-transformers
+mlflow
+dvc[s3]          # optional, for future remote storage
+python-dotenv
+httpx

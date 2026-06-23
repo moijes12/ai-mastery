@@ -1,4 +1,7 @@
 {
     "python.analysis.autoImportCompletions": true,
-    "python.analysis.indexing": true
+    "python.analysis.indexing": true,
+    "python.analysis.extraPaths": [
+        "./projects/week1-supportflow/backend/app"
+    ]
 }
