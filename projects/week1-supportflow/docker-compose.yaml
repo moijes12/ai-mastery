@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:16
-    container_name: db
+    container_name: support-flow-db
     environment:
       POSTGRES_DB: supportflow
       POSTGRES_USER: user
@@ -18,6 +18,7 @@ services:
   
   backend:
     build: ./backend
+    container_name: support-flow-backend
     ports:
       - "8000:8000"
     env_file:
@@ -31,6 +32,7 @@ services:
   
   frontend:
     build: ./frontend
+    container_name: support-flow-frontend
     ports:
       - "8501:8501"
     depends_on:
