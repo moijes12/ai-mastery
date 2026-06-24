@@ -1,9 +1,8 @@
+from app.core.database import get_session
+from app.models.ticket import Ticket, TicketCreate, TicketRead
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
-
-from ..core.database import get_session
-from ..models.ticket import Ticket, TicketCreate, TicketRead
 
 router = APIRouter()
 

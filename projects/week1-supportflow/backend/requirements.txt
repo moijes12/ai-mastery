@@ -12,3 +12,4 @@ mlflow
 dvc[s3]          # optional, for future remote storage
 python-dotenv
 httpx
+asyncpg

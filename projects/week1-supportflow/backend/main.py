@@ -1,8 +1,8 @@
 from contextlib import asynccontextmanager
 
-from api import tickets
-from core.config import settings
-from core.database import init_db
+from app.api import tickets
+from app.core.config import settings
+from app.core.database import init_db
 from fastapi import FastAPI
 
 
