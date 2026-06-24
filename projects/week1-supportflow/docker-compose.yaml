@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:16
+    container_name: db
     environment:
       POSTGRES_DB: supportflow
       POSTGRES_USER: user
@@ -9,6 +10,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d supportflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   
   backend:
     build: ./backend
@@ -17,7 +23,10 @@ services:
     env_file:
       - .env
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+
     
   
   frontend:
