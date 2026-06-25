@@ -1,25 +1,29 @@
 from loguru import logger
-from app.ml.pipeline import SupportFlowMLPipeline
+
+from ..ml.pipeline import SupportFlowMLPipeline
 
 
 class MLService:
     def __init__(self):
         self.pipeline = SupportFlowMLPipeline()
-        self._is_trained = False
+        self._trained = False
 
     async def ensure_trained(self):
-        """Lazy training on first request"""
-        if not self._is_trained:
-            logger.info("First prediction request - training models...")
+        """Lazy load / train the model on first use"""
+        if not self._trained:
+            logger.info("🔄 First prediction request - Training ML models...")
             self.pipeline.train()
-            self._is_trained = True
-            logger.success("Models trained and ready!")
+            self._trained = True
+            logger.success("✅ ML Models are now ready!")
 
-    async def predict_ticket(self, subject: str, description: str) -> dict:
+    async def predict(self, subject: str, description: str) -> dict:
+        """Main prediction method"""
         await self.ensure_trained()
-        prediction = self.pipeline.predict(subject, description)
-        return prediction
+        result = self.pipeline.predict(subject, description)
+
+        logger.info(f"Prediction made → Category: {result['category']}")
+        return result
 
 
-# Global instance
+# Singleton instance
 ml_service = MLService()

@@ -1,22 +1,24 @@
-from app.core.database import get_session
-from app.models.ticket import Ticket, TicketCreate, TicketRead
 from fastapi import APIRouter, Depends, HTTPException
+from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
-from app.services import ml_service
-from loguru import logger
 
-router = APIRouter()
+from ..core.database import get_session
+from ..models.ticket import Ticket, TicketCreate, TicketRead
+from ..services.ml_service import ml_service
+
+router = APIRouter(prefix="/tickets", tags=["tickets"])
 
 
-@router.post("/tickets/", response_model=TicketRead)
+@router.post("/", response_model=TicketRead)
 async def create_ticket(
     ticket: TicketCreate, session: AsyncSession = Depends(get_session)
 ):
+    """Create ticket with AI predictions"""
     # Get ML predictions
-    prediction = await ml_service.predict_ticket(ticket.subject, ticket.description)
+    prediction = await ml_service.predict(ticket.subject, ticket.description)
 
-    # Enrich ticket with predictions
+    # Enrich the ticket
     db_ticket = Ticket.model_validate(ticket)
     db_ticket.category = prediction["category"]
     db_ticket.urgency = prediction["urgency"]
@@ -29,19 +31,19 @@ async def create_ticket(
     await session.commit()
     await session.refresh(db_ticket)
 
-    logger.info(
-        f"Created ticket {db_ticket.id} with predicted category: {db_ticket.category}"
+    logger.success(
+        f"Ticket #{db_ticket.id} created with AI category: {db_ticket.category}"
     )
     return db_ticket
 
 
-@router.get("/tickets/", response_model=list[TicketRead])
+@router.get("/", response_model=list[TicketRead])
 async def list_tickets(session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Ticket))
     return result.scalars().all()
 
 
-@router.get("/tickets/{ticket_id}", response_model=TicketRead)
+@router.get("/{ticket_id}", response_model=TicketRead)
 async def get_ticket(ticket_id: int, session: AsyncSession = Depends(get_session)):
     ticket = await session.get(Ticket, ticket_id)
     if not ticket:
@@ -49,8 +51,8 @@ async def get_ticket(ticket_id: int, session: AsyncSession = Depends(get_session
     return ticket
 
 
-# New endpoint for quick prediction without saving
+# Bonus: Quick prediction without saving
 @router.post("/predict/")
-async def predict_only(subject: str, description: str):
-    prediction = await ml_service.predict_ticket(subject, description)
+async def quick_predict(subject: str, description: str):
+    prediction = await ml_service.predict(subject, description)
     return prediction
