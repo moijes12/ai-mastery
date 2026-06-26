@@ -1,0 +1,43 @@
+name: Week 1 - SupportFlow CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'projects/week1-supportflow/**'
+  pull_request:
+    paths:
+      - 'projects/week1-supportflow/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Install dependencies
+        working-directory: ./projects/week1-supportflow/backend
+        run: |
+          pip install -r requirements.txt
+
+      - name: Lint
+        working-directory: ./projects/week1-supportflow/backend
+        run: |
+          pip install ruff
+          ruff check .
+
+      - name: Run Tests
+        working-directory: ./projects/week1-supportflow/backend
+        run: |
+          pip install pytest pytest-asyncio httpx
+          pytest -v
+
+      - name: Build Docker
+        working-directory: ./projects/week1-supportflow
+        run: docker-compose build --no-cache
