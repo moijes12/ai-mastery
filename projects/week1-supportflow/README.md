@@ -33,6 +33,7 @@ flowchart TD
     D <--> E[TF-IDF + RandomForest]
     D <--> F[MLflow]
     G[Synthetic Data] --> D
+```
 
 ### How to Run
 
